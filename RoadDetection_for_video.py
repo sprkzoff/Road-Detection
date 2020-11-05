@@ -53,9 +53,12 @@ def average_slope_intercept(image,lines) :
     right_line = make_coor(image,right_fit_average)
     return np.array([left_line,right_line])
 
+old_lines = np.zeros((2,4),dtype=int)
 cap = cv2.VideoCapture("./datasets/test2.mp4")
 while(cap.isOpened()): 
     _, frame = cap.read()
+    if frame is None :
+        break
     lane_image = frame
     canny_image = canny(lane_image)
     res = region_of_interest(canny_image)
@@ -64,6 +67,13 @@ while(cap.isOpened()):
     average_lines = average_slope_intercept(lane_image,lines)
     print(average_lines)
     print()
+    if sum(average_lines[0,:]) != -4 and sum(average_lines[1,:]) != -4 :
+        old_lines = average_lines
+    else :
+        if sum(average_lines[0,:]) == -4 :
+            average_lines[0,:] = old_lines[0,:]
+        if sum(average_lines[1,:]) == -4 :
+            average_lines[0,:] = old_lines[1,:]
     average_line_image = display_lines(lane_image,average_lines)
     combine_average = cv2.addWeighted(lane_image, 0.8, average_line_image, 1, 1)
     all_point = []
