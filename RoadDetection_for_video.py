@@ -26,6 +26,8 @@ def display_lines(image,lines):
     return line_image
 
 def make_coor(image,line_params) :
+    if line_params.shape == () :
+        return np.array([-1,-1,-1,-1])
     slope,intercept = line_params
     y1 = image.shape[0]
     y2 = int(y1*(3/5))
